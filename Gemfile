@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '3.2.6'
 gem 'bootstrap-sass', '2.0.0'
+gem 'bcrypt-ruby', '3.0.1'
 
 group :development, :test do
   gem 'sqlite3', '1.3.5'
@@ -17,6 +18,7 @@ group :assets do
   gem 'uglifier', '1.2.3'
 end
 
+gem 'annotate', '~> 2.4.1.beta', group: :development
 gem 'jquery-rails', '2.0.0'
 
 group :test do
