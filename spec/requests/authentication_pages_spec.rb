@@ -8,6 +8,10 @@ describe "Authentication" do
 
     it { should have_selector('h1',    text: 'Sign in') }
     it { should have_selector('title', text: 'Sign in') }
+
+    let(:user) { FactoryGirl.create(:user) }
+    it { should_not have_link('Profile', href: user_path(user)) }
+    it { should_not have_link('Settings', href: edit_user_path(user)) }
   end
 
   describe "signin" do
@@ -94,8 +98,27 @@ describe "Authentication" do
         before { put user_path(user) }
         specify { response.should redirect_to(signin_path) }
       end  
+  
+      describe "in the Microposts controller" do
+        
+        describe "submitting the create action" do
+          before { post microposts_path }
+          specify { response.should redirect_to(signin_path) }
+        end
+        
+        # describe "submitting to destroy action" do
+        #   # before { delete micropost_path(FactoryGirl.create(:micropost)) }
+        #   before do
+        #     micropost = FactoryGirl.create(:micropost)
+        #     delete micropost_path
+        #   end
+        #   specify { response.should redirect_to(signin_path) }
+        # end
+
+      end
     end
 
+  
     describe "as wrong user" do
       let(:user) { FactoryGirl.create(:user) }
       let(:wrong_user) { FactoryGirl.create(:user, email: "wrong@example.com") }
@@ -123,5 +146,21 @@ describe "Authentication" do
         specify { response.should redirect_to(root_path) }
       end
     end
+  
+    describe "New/Create pages for signed-in users" do
+       let(:user) { FactoryGirl.create(:user) }
+       before { sign_in user }
+
+       describe "it should deny access to new" do
+         before { get new_user_path }
+         specify { response.should redirect_to(root_path) }   
+       end
+
+       describe "it should deny access to create" do
+         before { post users_path }
+         specify { response.should redirect_to(root_path) }   
+       end
+    end
+
   end
 end
