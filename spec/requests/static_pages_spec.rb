@@ -66,10 +66,39 @@ describe "Static pages" do
     end
     it "should render the user's feed" do
       user.feed.each do |item|
-        page.should have_selector("li##{item.id}", text: item.content)
+        page.should have_selector("li##{item.id}", text: item.content) 
       end
     end
-    
+    it "should show pluralized micropost count for more than 1 micropost" do
+      regexp = /2 microposts$/
+      page.should have_selector('span', text: regexp)
+    end   
+  end
+
+  describe "Micropost Counts and Pagination for single post" do
+    let(:user) { FactoryGirl.create(:user) }
+    before do
+      FactoryGirl.create(:micropost, user: user, content: "Lorem Ipsum")
+      sign_in user
+      visit root_path  end
+
+    it "should show singular micropost for 1 micropost" do
+      regexp = /1 micropost$/
+      page.should have_selector('span', text: regexp) 
+    end
+  end
+
+  describe "Micropost Counts and Pagination for multi page post" do
+    let(:user) { FactoryGirl.create(:user) }
+    before do
+      30.times { FactoryGirl.create(:micropost, user: user, content: "Lorem Ipsume") }
+      sign_in user
+      visit root_path
+    end
+    it "should have pagination" do
+      page.should have_selector('div.pagination')
+      
+    end
   end
   
 
