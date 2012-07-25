@@ -73,6 +73,17 @@ describe "Static pages" do
       regexp = /2 microposts$/
       page.should have_selector('span', text: regexp)
     end   
+
+    describe "follower/following counts" do
+      let(:other_user) { FactoryGirl.create(:user) }
+      before do
+        other_user.follow!(user)
+        visit root_path
+      end
+
+      it { should have_link("0 following", href: following_user_path(user)) }
+      it { should have_link("1 followers", href: followers_user_path(user)) }
+    end
   end
 
   describe "Micropost Counts and Pagination for single post" do
@@ -97,7 +108,6 @@ describe "Static pages" do
     end
     it "should have pagination" do
       page.should have_selector('div.pagination')
-      
     end
   end
   
